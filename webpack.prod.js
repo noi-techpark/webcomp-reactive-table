@@ -4,7 +4,7 @@ module.exports = {
   mode: 'production',
   entry: './src/index.js',
   output: {
-    filename: 'webcomp-boilerplate.min.js',
+    filename: 'reactive-table.min.js',
     path: path.resolve(__dirname, 'dist'),
   },
 };
