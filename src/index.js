@@ -94,19 +94,18 @@ export class ReactiveTable extends LitElement {
             * The data to show.
             * @type {string}
             */
-            data: {type: String},
-            _data: {type: Object},
+            data: {type: Object},
             
             /**
             * The schema of the data.
             * @type {string}
             */
-            schema: {type: String},
-            _schema: {type: Object},
+            schema: {type: Object},
             
             /**
-             * A custom format for dates. If not present, all dates are
-             * outputted as ISO 8601 strings
+             * A custom format for dates. If not present, all dates are outputted as
+             * ISO 8601 strings
+             * @type {string}
              */
             dateFormat: {
                 type: String,
@@ -120,38 +119,25 @@ export class ReactiveTable extends LitElement {
      */
     constructor() {
         super();
-        this.data = "[]";
-        this.schema = "[]";
-        this._data = onChange(
-            [],
-            (path, value, previousValue, applyData) => this.requestUpdate()
-        )
-        this._schema = onChange(
-            [],
-            (path, value, previousValue, applyData) => this.requestUpdate()
-        );
+        this.data = this._watchObject([], 'data-change')
+        this.schema = this._watchObject([], 'schema-change')
         this.hasHiddenRows = false
     }
-
+    
     /**
-     * Implement the Lit reactive lifecycle event hook.
+     * When the reactive properties are changed from the external DOM,
+     * wrap them into a watched object
      * @param {object} changed 
      */
     willUpdate(changed) {
         if (changed.has('data') && this.data) {
-            this._data = onChange(
-                JSON.parse(this.data), 
-                (path, value, previousValue, applyData) => this.requestUpdate()
-            );
+            this.data = this._watchObject(this.data, 'data-change')
         }
         if (changed.has('schema') && this.schema) {
-            this._schema = onChange(
-                JSON.parse(this.schema),
-                (path, value, previousValue, applyData) => this.requestUpdate()
-            );
+            this.schema = this._watchObject(this.schema, 'schema-change')
         }
     }
-    
+
     /**
      * Return the full template of the webcomponent.
      */
@@ -159,11 +145,11 @@ export class ReactiveTable extends LitElement {
         // if any of the rows has sub-rows, then the whole table should take it into account
         // and prepend every row with an empty small column;
         // this column will hold the expansion toggling button for expandable rows
-        this.hasHiddenRows = this._data.some((row) => Array.isArray(row))
+        this.hasHiddenRows = this.data.some((row) => Array.isArray(row))
         if (this.hasHiddenRows) {
-            this.style.setProperty('--gridtemplate', `1rem repeat(${this._schema.length}, 1fr)`)
+            this.style.setProperty('--gridtemplate', `1rem repeat(${this.schema.length}, 1fr)`)
         } else {
-            this.style.setProperty('--gridtemplate', `repeat(${this._schema.length}, 1fr)`)
+            this.style.setProperty('--gridtemplate', `repeat(${this.schema.length}, 1fr)`)
         }
 
         return html`
@@ -179,7 +165,7 @@ export class ReactiveTable extends LitElement {
             <tfoot>
                 <tr>
                     <td>
-                        <small>${this._data.length} records</small>
+                        <small>${this.data.length} records</small>
                     </td>
                 </tr>
             </tfoot>
@@ -188,12 +174,33 @@ export class ReactiveTable extends LitElement {
     }
 
     /**
+     * For any input, return a watched version of it.
+     * 
+     * When the value changes, request an update of the whole webcomponent
+     * and dispatch a custom event to the external DOM
+     * @param {*} obj - Any value to watch for changes
+     * @param {string} eventName - The name of a custom event to dispatch on change
+     * @returns {Object} A watched version of the input 
+     */
+    _watchObject(obj, eventName) {
+        return onChange(
+            obj,
+            (path, value, previousValue, applyData) => {
+                this.dispatchEvent(
+                    new CustomEvent(eventName, {detail: obj})
+                )
+                this.requestUpdate()
+            }
+        )
+    }
+
+    /**
      * Return the headers of the table according to the schema that has been fed into it.
      */
     _getHeaders() {
         let headers = html`
             ${this.hasHiddenRows ? html`<th></th>` : null}
-            ${this._schema.map((h) => html`<th>${h.name}</th>`)}
+            ${this.schema.map((h) => html`<th>${h.name}</th>`)}
         `
         return headers
     }
@@ -202,7 +209,7 @@ export class ReactiveTable extends LitElement {
      * Return the rows of the table according to the data that has been fed into it.
      */
     _getRows() {
-        if (this._data.length === 0) {
+        if (this.data.length === 0) {
             return html`
                 <tr>
                     <td class="nodata">
@@ -213,7 +220,7 @@ export class ReactiveTable extends LitElement {
         }
 
         return html`
-            ${this._data.map((row) => {
+            ${this.data.map((row) => {
                 if (Array.isArray(row)) {
                     // when a row is an array, it means that there are hidden subrows
                     // whose visibility can be toggled by clicking on the expander symbol "+"
@@ -229,7 +236,7 @@ export class ReactiveTable extends LitElement {
                                         @click="${this._handleToggleExpandClick}"
                                     >
                                     </td>
-                                    ${this._schema.map((header) =>
+                                    ${this.schema.map((header) =>
                                         html`<td class="${index !== 0 ? 'subrow hidden' : ''}">
                                             ${this._getValue(subrow, header)}
                                         </td>`
@@ -248,7 +255,7 @@ export class ReactiveTable extends LitElement {
                             this.hasHiddenRows ? html`<td></td>` : null
                         }
                         ${
-                            this._schema.map((header) =>
+                            this.schema.map((header) =>
                                 html`<td>
                                     ${this._getValue(row, header)}
                                 </td>`

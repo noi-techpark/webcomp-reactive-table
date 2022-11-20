@@ -62,9 +62,27 @@ Include the script file `dist/reactive-table.min.js` in your HTML and define the
   fetch('https://httpbin.org/get')
     .then(response => response.json())
     .then(json => [json.headers]) // do some data manipulation if needed
-    .then(data => table._data = data)
+    .then(data => table.data = data)
   // you can also change the schema at runtime, e.g.
-  // table._schema = [/* some new schema here */]
+  // table.schema = [/* some new schema here */]
+
+  // There are two custom events that are dispatched by the webcomponent
+  // whenever its internal state changes: "data-change" and "schema-change".
+  // they can be catched here to do some stuff, e.g. saving back the data to an API
+  table.addEventListener('data-change', (event) => {
+    // the modified data is contained in the event "detail" property
+    const newData = event.detail
+    await fetch(
+      'https://my-api.test/my-items',
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+      body: newData
+    )
+  })
 </script>
 ```
 
@@ -160,8 +178,6 @@ The schema of the data to show, expressed as a JSON encoded array of objects (ev
 | type          | if set to date, html, image, the value will be formatted (explained later)      |
 | default       | in case the value is not [truthy](https://developer.mozilla.org/en-US/docs/Glossary/Truthy) this will be used as default |
 
-This attribute has a corresponding Javascript property that can be used to feed the schema into the table, and it has the same name but prepended with a low dash: `_schema`
-
 ##### type
 
 The type indicates what kind of data is going to be present in that column.
@@ -173,8 +189,6 @@ The type indicates what kind of data is going to be present in that column.
 #### data
 
 The data to visualize, expressed as a JSON encoded array of objects matching (at least partially) the schema declared in the `schema` attribute. Object properties that are not matched by the schema are ignored.
-
-This attribute has a corresponding Javascript property that can be used to feed the schema into the table, and it has the same name but prepended with a low dash: `_data`
 
 #### date-format
 Whenever an object having a schema of `"type": "date"`" is handled, this is the formatting string that will be used to format the output. Refer to [this syntax](https://momentjs.com/docs/#/displaying/format/).
