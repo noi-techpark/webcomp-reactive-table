@@ -1,32 +1,78 @@
-
-<!-- Example of how you implement a webcomponent in a website -->
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="data:,">
-  <title>Hello World!</title>
+  <title>Reactive table</title>
 </head>
-
 <body>
-
-  <h1>Web Component - Boilerplate & Helloworld</h1>
-
-  Code Snippet:
-  <pre><code>
-    &lt;hello-world title="Hello World!"&gt;&lt;/hello-world&gt;
-
-    &lt;script src="webcomp-boilerplate.js"&gt;&lt;/script&gt;
-  </code></pre>
-
-
-  Output:
-  <!-- Set the attribute "title" and refer to it as property in JS -->
-  <hello-world title="Hello World!" />
-  <script src="webcomp-boilerplate.js"></script>
-
+  <reactive-table
+    data='
+      [
+        {
+          "id": 1,
+          "name": "Hello",
+          "when": "2022-11-03T21:10:57.299Z",
+          "markup": "<button onclick=alert(document.title)>click</button>",
+          "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Noto_Emoji_v2.034_1f60e.svg/36px-Noto_Emoji_v2.034_1f60e.svg.png"
+        },
+        {
+          "id": 2,
+          "name": "World",
+          "when": "1985-05-24T08:30:00Z",
+          "markup": "<a href=https://noi.bz.it>NOI</a>",
+          "logo": "https://noi.bz.it/themes/custom/noi_techpark/logo_bn.svg"
+        },
+        [
+          {
+            "id": 42,
+            "name": "Expand me",
+            "markup": "<progress value=35 max=100></progress>",
+            "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Noto_Emoji_v2.034_1f60d.svg/36px-Noto_Emoji_v2.034_1f60d.svg.png"
+          },
+          {
+            "id": 9,
+            "name": "Yet another row",
+            "when": "2022-06-22T10:47:00.000Z",
+            "markup": "<ol><li>one</li><li>two</li><li>three</li></ol>",
+            "logo": "https://media.tenor.com/scJRYj_rR8YAAAAM/john-travolta-lost.gif"
+          }
+        ]
+      ]
+    '
+    schema='
+      [
+        {
+          "key": "id",
+          "name": "A number",
+          "type": "integer"
+        },
+        {
+          "key": "name",
+          "name": "A string",
+          "type": "string"
+        },
+        {
+          "key": "when",
+          "name": "A date",
+          "type": "date",
+          "default": "-"
+        },
+        {
+          "key": "markup",
+          "name": "Some HTML",
+          "type": "html"
+        },
+        {
+          "key": "logo",
+          "name": "An Image",
+          "type": "image"
+        }
+      ]
+    '
+    date-format="DD/MM/yyyy - hh:mm:ss"
+  />
+  <script src="reactive-table.min.js"></script>
 </body>
-
 </html>
