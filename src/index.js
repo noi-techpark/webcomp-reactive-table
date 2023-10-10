@@ -196,7 +196,7 @@ export class ReactiveTable extends LitElement {
     _getHeaders() {
         let headers = html`
             ${this.hasHiddenRows ? html`<th></th>` : null}
-            ${this._schema.map((h) => html`<th>${h.name} <button @click=${() => this.sort(h.key, 'asc')}>asc</button><button @click=${() => this.sort(h.key, 'desc')}>desc</button></th>`)}
+            ${this._schema.map((h) => html`<th>${h.name} <button @click=${() => this.sort(h, 'asc')}>asc</button><button @click=${() => this.sort(h, 'desc')}>desc</button></th>`)}
         `
         return headers
     }
@@ -304,11 +304,20 @@ export class ReactiveTable extends LitElement {
     }
 
 
-    sort(key, order) {
+    sort(header, order) {
+        let key = header.key
+        let type = header.type
+
         if (order === 'asc')
-            this._data.sort((a, b) => a[key] > b[key])
+            this._data.sort((a, b) => this.typeCast(a[key], type) > this.typeCast(b[key], type))
         else
-            this._data.sort((a, b) => a[key] < b[key])
+            this._data.sort((a, b) => this.typeCast(a[key], type) < this.typeCast(b[key], type))
+    }
+
+    typeCast(value, type) {
+        if (type == 'date')
+            return new Date(value)
+        return value
     }
 }
 
