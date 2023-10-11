@@ -196,7 +196,7 @@ export class ReactiveTable extends LitElement {
     _getHeaders() {
         let headers = html`
             ${this.hasHiddenRows ? html`<th></th>` : null}
-            ${this._schema.map((h) => html`<th>${h.name} <button @click=${() => this.sort(h, 'asc')}>&uarr;</button><button @click=${() => this.sort(h, 'desc')}>&darr;</button></th>`)}
+            ${this._schema.map((h) => html`<th>${h.name} <button id="sort-asc-${h.key}" @click=${() => this.sort(h, 'asc')}>&darr;</button><button id="sort-desc-${h.key}" @click=${() => this.sort(h, 'desc')}>&uarr;</button></th>`)}
         `
         return headers
     }
@@ -312,6 +312,17 @@ export class ReactiveTable extends LitElement {
             this._data.sort((a, b) => this.typeCast(a[key], type) > this.typeCast(b[key], type))
         else
             this._data.sort((a, b) => this.typeCast(a[key], type) < this.typeCast(b[key], type))
+        
+            // active all buttons
+        let allButtons = this.shadowRoot.querySelectorAll('[id^=sort]');
+        allButtons.forEach(button => {
+            button.removeAttribute("disabled");
+        });
+
+        // disable clicked button
+        const buttonId = "sort-" + order + "-" + key
+        let button = this.shadowRoot.getElementById(buttonId);
+        button.setAttribute("disabled", true);
     }
 
     typeCast(value, type) {
