@@ -196,7 +196,7 @@ export class ReactiveTable extends LitElement {
     _getHeaders() {
         let headers = html`
             ${this.hasHiddenRows ? html`<th></th>` : null}
-            ${this._schema.map((h) => html`<th>${h.name} <button @click=${() => this.sort(h, 'asc')}>asc</button><button @click=${() => this.sort(h, 'desc')}>desc</button></th>`)}
+            ${this._schema.map((h) => html`<th>${h.name} <button @click=${() => this.sort(h, 'asc')}>&uarr;</button><button @click=${() => this.sort(h, 'desc')}>&darr;</button></th>`)}
         `
         return headers
     }
