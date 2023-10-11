@@ -197,7 +197,7 @@ export class ReactiveTable extends LitElement {
         console.log("size ",this._data.length);
         let headers = html`
             ${this.hasHiddenRows ? html`<th></th>` : null}
-            ${this._schema.map((h) => html`<th>${h.name} ${this._data.length > 1 ? html`<button id="sort-asc-${h.key}" @click=${() => this.sort(h, 'asc')}>&darr;</button><button id="sort-desc-${h.key}" @click=${() => this.sort(h, 'desc')}>&uarr;</button>` : null} </th>`)}
+            ${this._schema.map((h) => html`<th>${h.name} ${this._data.length > 1 ? html`<button id="sort-asc-${h.key}" @click=${() => this.sort(h, 'asc')}>&uarr;</button><button id="sort-desc-${h.key}" @click=${() => this.sort(h, 'desc')}>&darr;</button>` : null} </th>`)}
         `
 
         return headers
