@@ -337,6 +337,8 @@ export class ReactiveTable extends LitElement {
     typeCast(value, type) {
         if (type == 'date')
             return new Date(value)
+        if (type == 'number')
+            return Number(value)
         return value
     }
 }
