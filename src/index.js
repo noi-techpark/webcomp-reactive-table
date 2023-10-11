@@ -335,11 +335,16 @@ export class ReactiveTable extends LitElement {
 
     typeCast(value, key, type) {
         // use first value, if array
-        if(Array.isArray(value))
+        if (Array.isArray(value))
             value = value[0]
         value = value[key]
-        if (type == 'date')
-            return new Date(value)
+        if (type == 'date') {
+            // fix for dates with open end
+            if (value == null || value.trim().length == 0)
+                // set date far, far away in the future for open end dates
+                return new Date('9023-01-01 00:00:00.000+0000').getTime()
+            return new Date(value).getTime()
+        }
         return value
     }
 }
