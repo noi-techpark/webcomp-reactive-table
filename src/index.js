@@ -315,9 +315,9 @@ export class ReactiveTable extends LitElement {
         let type = header.type
 
         if (order === 'asc')
-            this._data.sort((a, b) => this.typeCast(a[key], type) > this.typeCast(b[key], type))
+            this._data.sort((a, b) => this.typeCast(a, key, type) > this.typeCast(b, key, type))
         else
-            this._data.sort((a, b) => this.typeCast(a[key], type) < this.typeCast(b[key], type))
+            this._data.sort((a, b) => this.typeCast(a, key, type) < this.typeCast(b, key, type))
 
 
         this.enableAllSortButtons();
@@ -334,7 +334,12 @@ export class ReactiveTable extends LitElement {
         });
     }
 
-    typeCast(value, type) {
+    typeCast(value, key, type) {
+        // use first value, if array
+        console.log(value);
+        if(Array.isArray(value))
+            value = value[0]
+        value = value[key]
         if (type == 'date')
             return new Date(value)
         return value
