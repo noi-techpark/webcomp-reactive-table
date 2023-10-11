@@ -1,5 +1,6 @@
 {
   "title": "Reactive table",
+  "shortName": "reactive-table",
   "description": "A simple HTML table that gets fed with custom data",
   "descriptionAbstract": "The purpose of this webcomponent is to have an easy way to dynamically create a table by feeding data into it from the external DOM.",
   "license": "AGPL-3.0-or-later",
