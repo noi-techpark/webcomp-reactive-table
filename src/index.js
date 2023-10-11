@@ -142,12 +142,16 @@ export class ReactiveTable extends LitElement {
      */
     willUpdate(changed) {
         if (changed.has('data') && this.data) {
+            // if data changes, enable all buttons
+            this.enableAllSortButtons();
             this._data = onChange(
                 JSON.parse(this.data),
                 (path, value, previousValue, applyData) => this.requestUpdate()
             );
         }
         if (changed.has('schema') && this.schema) {
+            // if schema changes, enable all buttons
+            this.enableAllSortButtons();
             this._schema = onChange(
                 JSON.parse(this.schema),
                 (path, value, previousValue, applyData) => this.requestUpdate()
@@ -194,7 +198,7 @@ export class ReactiveTable extends LitElement {
      * Return the headers of the table according to the schema that has been fed into it.
      */
     _getHeaders() {
-        console.log("size ",this._data.length);
+        console.log("size ", this._data.length);
         let headers = html`
             ${this.hasHiddenRows ? html`<th></th>` : null}
             ${this._schema.map((h) => html`<th>${h.name} ${this._data.length > 1 ? html`<button id="sort-asc-${h.key}" @click=${() => this.sort(h, 'asc')}>&uarr;</button><button id="sort-desc-${h.key}" @click=${() => this.sort(h, 'desc')}>&darr;</button>` : null} </th>`)}
@@ -315,16 +319,19 @@ export class ReactiveTable extends LitElement {
         else
             this._data.sort((a, b) => this.typeCast(a[key], type) < this.typeCast(b[key], type))
 
-        // active all buttons
-        let allButtons = this.shadowRoot.querySelectorAll('[id^=sort]');
-        allButtons.forEach(button => {
-            button.removeAttribute("disabled");
-        });
 
+        this.enableAllSortButtons();
         // disable clicked button
         const buttonId = "sort-" + order + "-" + key
         let button = this.shadowRoot.getElementById(buttonId);
         button.setAttribute("disabled", true);
+    }
+
+    enableAllSortButtons() {
+        let allButtons = this.shadowRoot.querySelectorAll('[id^=sort]');
+        allButtons.forEach(button => {
+            button.removeAttribute("disabled");
+        });
     }
 
     typeCast(value, type) {
