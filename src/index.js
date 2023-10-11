@@ -198,7 +198,6 @@ export class ReactiveTable extends LitElement {
      * Return the headers of the table according to the schema that has been fed into it.
      */
     _getHeaders() {
-        console.log("size ", this._data.length);
         let headers = html`
             ${this.hasHiddenRows ? html`<th></th>` : null}
             ${this._schema.map((h) => html`<th>${h.name} ${this._data.length > 1 ? html`<button id="sort-asc-${h.key}" @click=${() => this.sort(h, 'asc')}>&uarr;</button><button id="sort-desc-${h.key}" @click=${() => this.sort(h, 'desc')}>&darr;</button>` : null} </th>`)}
@@ -336,7 +335,6 @@ export class ReactiveTable extends LitElement {
 
     typeCast(value, key, type) {
         // use first value, if array
-        console.log(value);
         if(Array.isArray(value))
             value = value[0]
         value = value[key]
