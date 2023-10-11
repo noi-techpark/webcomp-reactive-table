@@ -194,10 +194,12 @@ export class ReactiveTable extends LitElement {
      * Return the headers of the table according to the schema that has been fed into it.
      */
     _getHeaders() {
+        console.log("size ",this._data.length);
         let headers = html`
             ${this.hasHiddenRows ? html`<th></th>` : null}
-            ${this._schema.map((h) => html`<th>${h.name} <button id="sort-asc-${h.key}" @click=${() => this.sort(h, 'asc')}>&darr;</button><button id="sort-desc-${h.key}" @click=${() => this.sort(h, 'desc')}>&uarr;</button></th>`)}
+            ${this._schema.map((h) => html`<th>${h.name} ${this._data.length > 1 ? html`<button id="sort-asc-${h.key}" @click=${() => this.sort(h, 'asc')}>&darr;</button><button id="sort-desc-${h.key}" @click=${() => this.sort(h, 'desc')}>&uarr;</button>` : null} </th>`)}
         `
+
         return headers
     }
 
@@ -312,8 +314,8 @@ export class ReactiveTable extends LitElement {
             this._data.sort((a, b) => this.typeCast(a[key], type) > this.typeCast(b[key], type))
         else
             this._data.sort((a, b) => this.typeCast(a[key], type) < this.typeCast(b[key], type))
-        
-            // active all buttons
+
+        // active all buttons
         let allButtons = this.shadowRoot.querySelectorAll('[id^=sort]');
         allButtons.forEach(button => {
             button.removeAttribute("disabled");
