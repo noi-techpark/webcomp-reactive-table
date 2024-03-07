@@ -1,8 +1,8 @@
 {
   "title": "Reactive table",
   "shortName": "reactive-table",
-  "description": "A simple HTML table that gets fed with custom data",
-  "descriptionAbstract": "The purpose of this webcomponent is to have an easy way to dynamically create a table by feeding data into it from the external DOM.",
+  "description": "A simple HTML table that shows custom data.",
+  "descriptionAbstract": "The purpose of this webcomponent is to have an easy way to dynamically create a table by feeding data into it from the external DOM. It is used on analytics.opendatahub.com events layer.",
   "license": "AGPL-3.0-or-later",
   "repositoryUrl": "https://github.com/leonixyz/webcomp-reactive-table.git",
   "copyrightHolders": [
